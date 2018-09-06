@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:fitsSystemWindows="true"
+              android:id="@+id/ll_view"
+              android:clickable="false"
+              android:background="@color/line_color"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent">
+    <RelativeLayout
+            android:id="@+id/rl_title"
+            style="@style/headLayoutStyle">
+        <ImageView
+                android:id="@+id/iv_logo"
+                style="@style/headLogoStyle"/>
+        <TextView
+                android:id="@+id/tv_title"
+                style="@style/headTitleStyle"
+                android:text="定位"/>
+        <ImageView
+                android:id="@+id/iv_setting"
+                style="@style/headSettingStyle"/>
+    </RelativeLayout>
+    <TextView android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:text="ttttttttttttttttttttt"/>
+</LinearLayout>

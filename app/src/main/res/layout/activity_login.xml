@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.cc.android.widget.KeyboardLinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true"
+        android:background="@color/app_text_white">
+    <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/iv_login_bg" android:src="@drawable/bg_login" android:scaleType="fitXY"
+            android:adjustViewBounds="true"/>
+
+    <EditText
+            android:layout_marginTop="@dimen/dp_30"
+            android:id="@+id/et_user"
+            style="@style/editTextStyle"
+            android:drawableLeft="@drawable/login_ico_phone"
+            android:hint="@string/hint_phone"/>
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginLeft="@dimen/dp_20"
+            android:layout_marginRight="@dimen/dp_20"
+            android:background="@color/login_line_color"/>
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="@dimen/edittext_height">
+        <EditText
+                android:id="@+id/et_pwd"
+                style="@style/editTextStyle"
+                android:drawableLeft="@drawable/login_ico_password"
+                android:hint="@string/hint_pwd"
+                android:inputType="textPassword"/>
+    </RelativeLayout>
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginLeft="@dimen/dp_20"
+            android:layout_marginRight="@dimen/dp_20"
+            android:background="@color/login_line_color"/>
+    <LinearLayout
+            android:id="@+id/ll_err"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:visibility="invisible">
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/iv_toast"
+                android:src="@drawable/ic_toast"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"/>
+        <TextView
+                android:id="@+id/tv_err_info"
+                android:layout_marginLeft="@dimen/dp_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_yellow"
+                android:text="账号或者密码错误"/>
+    </LinearLayout>
+
+    <RelativeLayout
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+        <Button
+                android:id="@+id/btn_login"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/selector_login_bg"
+                android:textColor="@color/app_text_white"
+                android:textSize="@dimen/tv_size_30"
+                android:text="登录"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        <ProgressBar
+                android:id="@+id/pb_rotate"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/dp_80"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateDrawable="@drawable/custom_login_rotate"
+                android:visibility="gone"/>
+        <ImageView
+                android:id="@+id/iv_login_next"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/dp_80"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/login_btn_next"
+                android:visibility="visible"/>
+    </RelativeLayout>
+
+</com.cc.android.widget.KeyboardLinearLayout>
