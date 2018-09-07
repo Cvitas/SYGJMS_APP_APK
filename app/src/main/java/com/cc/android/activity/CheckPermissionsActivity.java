@@ -15,6 +15,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.view.KeyEvent;
 import com.cc.android.R;
+import com.cc.android.base.BaseActivity;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,10 +32,11 @@ import java.util.List;
  * @类型名称：PermissionsChecker
  * @since 2.5.0
  */
-public class CheckPermissionsActivity extends Activity {
+public class CheckPermissionsActivity extends BaseActivity {
 	/**
 	 * 需要进行检测的权限数组
 	 */
+
 	protected String[] needPermissions = {
 			Manifest.permission.ACCESS_COARSE_LOCATION,
 			Manifest.permission.ACCESS_FINE_LOCATION,

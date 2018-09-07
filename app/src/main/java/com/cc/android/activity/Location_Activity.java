@@ -1,5 +1,6 @@
 package com.cc.android.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,9 +14,14 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.cc.android.net.Api;
+import com.cc.android.net.NetUtils;
 import com.cc.android.R;
-import com.cc.android.base.BaseActivity;
-import com.cc.android.utils.Utils;
+import com.cc.android.entity.RspOk;
+import com.cc.android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 高精度定位模式功能演示
@@ -46,6 +52,7 @@ public class Location_Activity extends CheckPermissionsActivity
 	private AMapLocationClient locationClient = null;
 	private AMapLocationClientOption locationOption = null;
 	private MapView mMapView;
+	private Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,7 @@ public class Location_Activity extends CheckPermissionsActivity
 		mMapView = (MapView) findViewById(R.id.map);
 		//在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
 		mMapView.onCreate(savedInstanceState);
+		mContext = this;
 
 		//初始化地图控制器对象
 		AMap aMap = null;
@@ -78,26 +86,26 @@ public class Location_Activity extends CheckPermissionsActivity
 	
 	//初始化控件
 	private void initView(){
-		rgLocationMode = (RadioGroup) findViewById(R.id.rg_locationMode);
-		
-		etInterval = (EditText) findViewById(R.id.et_interval);
-		etHttpTimeout = (EditText) findViewById(R.id.et_httpTimeout);
-		
-		cbOnceLocation = (CheckBox)findViewById(R.id.cb_onceLocation);
-		cbGpsFirst = (CheckBox) findViewById(R.id.cb_gpsFirst);
-		cbAddress = (CheckBox) findViewById(R.id.cb_needAddress);
-		cbCacheAble = (CheckBox) findViewById(R.id.cb_cacheAble);
-		cbOnceLastest = (CheckBox) findViewById(R.id.cb_onceLastest);
-		cbSensorAble = (CheckBox)findViewById(R.id.cb_sensorAble);
-
-		tvResult = (TextView) findViewById(R.id.tv_result);
+//		rgLocationMode = (RadioGroup) findViewById(R.id.rg_locationMode);
+//
+//		etInterval = (EditText) findViewById(R.id.et_interval);
+//		etHttpTimeout = (EditText) findViewById(R.id.et_httpTimeout);
+//
+//		cbOnceLocation = (CheckBox)findViewById(R.id.cb_onceLocation);
+//		cbGpsFirst = (CheckBox) findViewById(R.id.cb_gpsFirst);
+//		cbAddress = (CheckBox) findViewById(R.id.cb_needAddress);
+//		cbCacheAble = (CheckBox) findViewById(R.id.cb_cacheAble);
+//		cbOnceLastest = (CheckBox) findViewById(R.id.cb_onceLastest);
+//		cbSensorAble = (CheckBox)findViewById(R.id.cb_sensorAble);
+//
+//		tvResult = (TextView) findViewById(R.id.tv_result);
 		btLocation = (Button) findViewById(R.id.bt_location);
-
-		rgGeoLanguage = (RadioGroup) findViewById(R.id.rg_language);
-		
-		rgLocationMode.setOnCheckedChangeListener(this);
+//
+//		rgGeoLanguage = (RadioGroup) findViewById(R.id.rg_language);
+//
+//		rgLocationMode.setOnCheckedChangeListener(this);
 		btLocation.setOnClickListener(this);
-		rgGeoLanguage.setOnCheckedChangeListener(this);
+//		rgGeoLanguage.setOnCheckedChangeListener(this);
 	}
 
 	/**
@@ -195,17 +203,17 @@ public class Location_Activity extends CheckPermissionsActivity
 		if (v.getId() == R.id.bt_location) {
 			if (btLocation.getText().equals(
 					getResources().getString(R.string.startLocation))) {
-				setViewEnable(false);
+				//setViewEnable(false);
 				btLocation.setText(getResources().getString(
 						R.string.stopLocation));
-				tvResult.setText("正在定位...");
+				//tvResult.setText("正在定位...");
 				startLocation();
 			} else {
-				setViewEnable(true);
+				//setViewEnable(true);
 				btLocation.setText(getResources().getString(
 						R.string.startLocation));
 				stopLocation();
-				tvResult.setText("定位停止");
+				//tvResult.setText("定位停止");
 			}
 		}
 	}
@@ -238,7 +246,7 @@ public class Location_Activity extends CheckPermissionsActivity
 		mOption.setLocationMode(AMapLocationMode.Hight_Accuracy);//可选，设置定位模式，可选的模式有高精度、仅设备、仅网络。默认为高精度模式
 		mOption.setGpsFirst(false);//可选，设置是否gps优先，只在高精度模式下有效。默认关闭
 		mOption.setHttpTimeOut(30000);//可选，设置网络请求超时时间。默认为30秒。在仅设备模式下无效
-		mOption.setInterval(2000);//可选，设置定位间隔。默认为2秒
+		mOption.setInterval(5000);//可选，设置定位间隔。默认为2秒
 		mOption.setNeedAddress(true);//可选，设置是否返回逆地理地址信息。默认是true
 		mOption.setOnceLocation(false);//可选，设置是否单次定位。默认是false
 		mOption.setOnceLocationLatest(false);//可选，设置是否等待wifi刷新，默认为false.如果设置为true,会自动变为单次定位，持续定位时不要使用
@@ -256,54 +264,28 @@ public class Location_Activity extends CheckPermissionsActivity
 	AMapLocationListener locationListener = new AMapLocationListener() {
 		@Override
 		public void onLocationChanged(AMapLocation location) {
-			if (null != location) {
-
-				StringBuffer sb = new StringBuffer();
-				//errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
-				if(location.getErrorCode() == 0){
-					sb.append("定位成功" + "\n");
-					sb.append("定位类型: " + location.getLocationType() + "\n");
-					sb.append("经    度    : " + location.getLongitude() + "\n");
-					sb.append("纬    度    : " + location.getLatitude() + "\n");
-					sb.append("精    度    : " + location.getAccuracy() + "米" + "\n");
-					sb.append("提供者    : " + location.getProvider() + "\n");
-
-					sb.append("速    度    : " + location.getSpeed() + "米/秒" + "\n");
-					sb.append("角    度    : " + location.getBearing() + "\n");
-					// 获取当前提供定位服务的卫星个数
-					sb.append("星    数    : " + location.getSatellites() + "\n");
-					sb.append("国    家    : " + location.getCountry() + "\n");
-					sb.append("省            : " + location.getProvince() + "\n");
-					sb.append("市            : " + location.getCity() + "\n");
-					sb.append("城市编码 : " + location.getCityCode() + "\n");
-					sb.append("区            : " + location.getDistrict() + "\n");
-					sb.append("区域 码   : " + location.getAdCode() + "\n");
-					sb.append("地    址    : " + location.getAddress() + "\n");
-					sb.append("兴趣点    : " + location.getPoiName() + "\n");
-					//定位完成的时间
-					sb.append("定位时间: " + Utils.formatUTC(location.getTime(), "yyyy-MM-dd HH:mm:ss") + "\n");
-				} else {
-					//定位失败
-					sb.append("定位失败" + "\n");
-					sb.append("错误码:" + location.getErrorCode() + "\n");
-					sb.append("错误信息:" + location.getErrorInfo() + "\n");
-					sb.append("错误描述:" + location.getLocationDetail() + "\n");
-				}
-				sb.append("***定位质量报告***").append("\n");
-				sb.append("* WIFI开关：").append(location.getLocationQualityReport().isWifiAble() ? "开启":"关闭").append("\n");
-				sb.append("* GPS状态：").append(getGPSStatusString(location.getLocationQualityReport().getGPSStatus())).append("\n");
-				sb.append("* GPS星数：").append(location.getLocationQualityReport().getGPSSatellites()).append("\n");
-				sb.append("* 网络类型：" + location.getLocationQualityReport().getNetworkType()).append("\n");
-				sb.append("* 网络耗时：" + location.getLocationQualityReport().getNetUseTime()).append("\n");
-				sb.append("****************").append("\n");
-				//定位之后的回调时间
-				sb.append("回调时间: " + Utils.formatUTC(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss") + "\n");
-
-				//解析定位结果，
-				String result = sb.toString();
-				tvResult.setText(result);
+			if (null != location && location.getErrorCode() == 0) {
+				final Map<String, String> params = new HashMap<>();
+				params.put("UserId","1");
+				params.put("Longitude",String.valueOf(location.getLongitude()));
+				params.put("Latitude",String.valueOf(location.getLatitude()));
+				params.put("Province",String.valueOf(location.getProvince()));
+				params.put("City",String.valueOf(location.getCity()));
+				params.put("Area",String.valueOf(location.getDistrict()));
+				params.put("Address",String.valueOf( location.getAddress()));
+				params.put("Speed",String.valueOf(location.getSpeed()));
+				Api.savePosition(mContext, params, new NetUtils.NetCallBack<RspOk>() {
+					@Override
+					public void success(RspOk rspData) {
+						System.out.println(rspData);
+					}
+					@Override
+					public void failed(String msg) {
+						System.out.println(msg);
+					}
+				});
 			} else {
-				tvResult.setText("定位失败，loc is null");
+                Toast.show(self,null == location?"当前定位失败，请联系管理员":location.getErrorInfo());
 			}
 		}
 	};
@@ -383,7 +365,7 @@ public class Location_Activity extends CheckPermissionsActivity
 	 */
 	private void startLocation(){
 		//根据控件的选择，重新设置定位参数
-		resetOption();
+		//resetOption();
 		// 设置定位参数
 		locationClient.setLocationOption(locationOption);
 		// 启动定位

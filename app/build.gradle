@@ -18,6 +18,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -30,13 +31,20 @@ android {
     }
     sourceSets{
         main{
+            java {
+                srcDir 'src/java' // 指定源码目录
+            }
             manifest.srcFile 'AndroidManifest.xml'
             jniLibs.srcDirs = ['libs']
+            assets.srcDirs = ['assets']
         }
     }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
+    }
+    dataBinding {
+        enabled = true;
     }
 }
 
@@ -46,5 +54,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.google.code.gson:gson:2.8.5'
+    compile 'com.android.support:multidex:1.0.0'
     testCompile 'junit:junit:4.12'
 }

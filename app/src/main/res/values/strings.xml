@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">客到系统</string>
+    <string name="app_name">三预民兵系统</string>
     <string name="hello">Hello SHARE_POSITION!</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
@@ -20,7 +20,7 @@
 
 
 
-<string name="title_main">高德定位SDK功能展示</string>
+<string name="title_main">民兵系统功能展示</string>
 
 <string name="title_location">获取定位数据</string>
 <string name="location">获取定位数据</string>

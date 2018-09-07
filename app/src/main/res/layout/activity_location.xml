@@ -1,16 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
     <FrameLayout  android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:background="#ff0000">
+                  android:background="#FFFFFF">
         <com.amap.api.maps.MapView
                 android:id="@+id/map"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
         </com.amap.api.maps.MapView>
-        <include layout="@layout/plugin_location_option"/>
+        <!--<include layout="@layout/plugin_location_option"/>-->
         <Button
                 android:id="@+id/bt_location"
                 android:layout_width="wrap_content"

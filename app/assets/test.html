@@ -1,0 +1,55 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    function myFunction() {
+        alert("Hello World!");
+    }
+    function onAlert() {
+
+        alert("This is a alert sample from html");
+    }
+    function onConfirm() {
+
+        var b = confirm("are you sure to login?");
+
+        alert("your choice is " + b);
+    }
+    function onPrompt() {
+
+        var b = prompt("please input your password", "aaa");
+        alert("your input is " + b);
+    }
+
+
+</script>
+</head>
+
+<body>
+
+    <button onclick="myFunction()">点击这里</button>
+    <input type="button" value="alert" onclick="onAlert()" />
+    <input type="button" value="confirm" onclick="onConfirm()" />
+    <input type="button" value="prompt" onclick="onPrompt()" />
+
+    <a>js中调用本地方法</a>
+    <script>
+
+        function funFromjs(){
+            document.getElementById("helloweb").innerHTML="HelloWebView,i'm from js";
+        }
+        var aTag = document.getElementsByTagName('a')[0];
+        aTag.addEventListener('click', function(){
+            //调用android本地方法
+            myObj.funFromAndroidToClose();
+            return false;
+        }, false);
+    </script>
+    <p></p>
+    <div id="helloweb">
+
+    </div>
+</body>
+</html>
