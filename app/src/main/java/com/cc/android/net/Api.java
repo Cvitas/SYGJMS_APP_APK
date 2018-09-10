@@ -26,6 +26,21 @@ public class Api {
      * 登录
      *
      * @param context     activity 上下文
+     * @param username    用户名
+     * @param password    密码
+     * @param netCallBack 回调
+     */
+    public static void Login(Context context, String username, String password, NetUtils.NetCallBack<RspOk> netCallBack) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("password", password);
+        params.put("username", username);
+        NetUtils.post(context, RequestType.APP_LOGIN.getConstValue(), params, netCallBack, RspOk.RspWrapper.class);
+    }
+
+    /**
+     * 登录
+     *
+     * @param context     activity 上下文
      * @param netCallBack 回调
      */
     public static void savePosition(Context context, Map<String, String> params, NetUtils.NetCallBack<RspOk> netCallBack) {

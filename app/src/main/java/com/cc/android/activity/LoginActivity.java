@@ -14,9 +14,14 @@ import com.cc.android.R;
 import com.cc.android.base.BaseActivity;
 import com.cc.android.db.DB_Object;
 import com.cc.android.entity.RspLogin;
+import com.cc.android.entity.RspOk;
+import com.cc.android.net.Api;
+import com.cc.android.net.NetUtils;
 import com.cc.android.tools.SystemStatusManager;
 import com.cc.android.utils.StringUtil;
+import com.cc.android.utils.Utils;
 import com.cc.android.widget.KeyboardLinearLayout;
+import com.cc.android.widget.Toast;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private Button btn_text;
@@ -105,15 +110,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //            ll_err.setVisibility(View.VISIBLE);
 //            tv_err_info.setText("请输入正确的手机号码！");
 //            return;
-            Intent intent = new Intent(this, MapActivity.class);
-            startActivity(intent);
-            rightToleft();
 //        }
-        if(StringUtil.isNullOrEmpty(userPwd)){
+        if(StringUtil.isNullOrEmpty(userName)){
             pb_rotate.setVisibility(View.INVISIBLE);
             iv_login_next.setVisibility(View.VISIBLE);
             ll_err.setVisibility(View.VISIBLE);
-            tv_err_info.setText("请输入密码！");
+            tv_err_info.setText("请输入账号！");
             return;
         }
         if(StringUtil.isNullOrEmpty(userPwd)){
@@ -123,6 +125,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             tv_err_info.setText("请输入密码！");
             return;
         }
+        Api.Login(self, userName, userPwd, new NetUtils.NetCallBack<RspOk>() {
+            @Override
+            public void success(RspOk rspData) {
+                Intent intent = new Intent(self, Location_Activity.class);
+                startActivity(intent);
+                rightToleft();
+            }
+            @Override
+            public void failed(String msg) {
+                System.out.println(msg);
+                Toast.show(self,msg);
+            }
+        });
     }
 
     /**

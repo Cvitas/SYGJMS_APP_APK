@@ -18,6 +18,7 @@ import com.cc.android.net.Api;
 import com.cc.android.net.NetUtils;
 import com.cc.android.R;
 import com.cc.android.entity.RspOk;
+import com.cc.android.widget.AlertMessage;
 import com.cc.android.widget.Toast;
 
 import java.util.HashMap;
@@ -32,23 +33,9 @@ import java.util.Map;
  * @文件名称: Hight_Accuracy_Activity.java
  * @类型名称: Hight_Accuracy_Activity
  */
-public class Location_Activity extends CheckPermissionsActivity
-		implements
-			OnCheckedChangeListener,
-			OnClickListener{
-	private RadioGroup rgLocationMode;
-	private EditText etInterval;
-	private EditText etHttpTimeout;
-	private CheckBox cbOnceLocation;
-	private CheckBox cbAddress;
-	private CheckBox cbGpsFirst;
-	private CheckBox cbCacheAble;
-	private CheckBox cbOnceLastest;
-	private CheckBox cbSensorAble;
-	private TextView tvResult;
+public class Location_Activity extends CheckPermissionsActivity implements OnClickListener{
 	private Button btLocation;
-	private RadioGroup rgGeoLanguage;
-
+	private Button btMessage;
 	private AMapLocationClient locationClient = null;
 	private AMapLocationClientOption locationOption = null;
 	private MapView mMapView;
@@ -72,6 +59,7 @@ public class Location_Activity extends CheckPermissionsActivity
 			aMap = mMapView.getMap();
 			MyLocationStyle myLocationStyle;
 			myLocationStyle = new MyLocationStyle();
+            myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
 			myLocationStyle.interval(2000);
 			aMap.setMyLocationStyle(myLocationStyle);
 			aMap.setMyLocationEnabled(true);
@@ -86,26 +74,10 @@ public class Location_Activity extends CheckPermissionsActivity
 	
 	//初始化控件
 	private void initView(){
-//		rgLocationMode = (RadioGroup) findViewById(R.id.rg_locationMode);
-//
-//		etInterval = (EditText) findViewById(R.id.et_interval);
-//		etHttpTimeout = (EditText) findViewById(R.id.et_httpTimeout);
-//
-//		cbOnceLocation = (CheckBox)findViewById(R.id.cb_onceLocation);
-//		cbGpsFirst = (CheckBox) findViewById(R.id.cb_gpsFirst);
-//		cbAddress = (CheckBox) findViewById(R.id.cb_needAddress);
-//		cbCacheAble = (CheckBox) findViewById(R.id.cb_cacheAble);
-//		cbOnceLastest = (CheckBox) findViewById(R.id.cb_onceLastest);
-//		cbSensorAble = (CheckBox)findViewById(R.id.cb_sensorAble);
-//
-//		tvResult = (TextView) findViewById(R.id.tv_result);
 		btLocation = (Button) findViewById(R.id.bt_location);
-//
-//		rgGeoLanguage = (RadioGroup) findViewById(R.id.rg_language);
-//
-//		rgLocationMode.setOnCheckedChangeListener(this);
+		btMessage = (Button) findViewById(R.id.bt_message);
 		btLocation.setOnClickListener(this);
-//		rgGeoLanguage.setOnCheckedChangeListener(this);
+		btMessage.setOnClickListener(this);
 	}
 
 	/**
@@ -143,79 +115,21 @@ public class Location_Activity extends CheckPermissionsActivity
 	}
 
 	@Override
-	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		if (null == locationOption) {
-			locationOption = new AMapLocationClientOption();
-		}
-		if(group == rgLocationMode) {
-			switch (checkedId) {
-				case R.id.rb_batterySaving:
-					locationOption.setLocationMode(AMapLocationMode.Battery_Saving);
-					break;
-				case R.id.rb_deviceSensors:
-					locationOption.setLocationMode(AMapLocationMode.Device_Sensors);
-					break;
-				case R.id.rb_hightAccuracy:
-					locationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
-					break;
-				default:
-					break;
-			}
-		}
-		if(group == rgGeoLanguage){
-			switch (checkedId){
-				case R.id.rb_languageDefault:
-					locationOption.setGeoLanguage(AMapLocationClientOption.GeoLanguage.DEFAULT);
-					break;
-				case R.id.rb_languageEN:
-					locationOption.setGeoLanguage(AMapLocationClientOption.GeoLanguage.EN);
-					break;
-				case R.id.rb_languageZH:
-					locationOption.setGeoLanguage(AMapLocationClientOption.GeoLanguage.ZH);
-					break;
-			}
-		}
-
-	}
-
-	/**
-	 * 设置控件的可用状态
-	 */
-	private void setViewEnable(boolean isEnable) {
-		for(int i=0; i<rgLocationMode.getChildCount(); i++){
-			rgLocationMode.getChildAt(i).setEnabled(isEnable);
-		}
-		etInterval.setEnabled(isEnable);
-		etHttpTimeout.setEnabled(isEnable);
-		cbOnceLocation.setEnabled(isEnable);
-		cbGpsFirst.setEnabled(isEnable);
-		cbAddress.setEnabled(isEnable);
-		cbCacheAble.setEnabled(isEnable);
-		cbOnceLastest.setEnabled(isEnable);
-		cbSensorAble.setEnabled(isEnable);
-		for(int j=0; j<rgGeoLanguage.getChildCount(); j++){
-			rgGeoLanguage.getChildAt(j).setEnabled(isEnable);
-		}
-	}
-
-	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.bt_location) {
 			if (btLocation.getText().equals(
 					getResources().getString(R.string.startLocation))) {
-				//setViewEnable(false);
 				btLocation.setText(getResources().getString(
 						R.string.stopLocation));
-				//tvResult.setText("正在定位...");
 				startLocation();
 			} else {
-				//setViewEnable(true);
 				btLocation.setText(getResources().getString(
 						R.string.startLocation));
 				stopLocation();
-				//tvResult.setText("定位停止");
 			}
-		}
+		}else if(v.getId() == R.id.bt_message){
+            AlertMessage.dialogShow(this,"a","assssssssssssssssssss");
+        }
 	}
 	
 	/**
@@ -244,14 +158,14 @@ public class Location_Activity extends CheckPermissionsActivity
 	private AMapLocationClientOption getDefaultOption(){
 		AMapLocationClientOption mOption = new AMapLocationClientOption();
 		mOption.setLocationMode(AMapLocationMode.Hight_Accuracy);//可选，设置定位模式，可选的模式有高精度、仅设备、仅网络。默认为高精度模式
-		mOption.setGpsFirst(false);//可选，设置是否gps优先，只在高精度模式下有效。默认关闭
+		mOption.setGpsFirst(true);//可选，设置是否gps优先，只在高精度模式下有效。默认关闭
 		mOption.setHttpTimeOut(30000);//可选，设置网络请求超时时间。默认为30秒。在仅设备模式下无效
 		mOption.setInterval(5000);//可选，设置定位间隔。默认为2秒
 		mOption.setNeedAddress(true);//可选，设置是否返回逆地理地址信息。默认是true
 		mOption.setOnceLocation(false);//可选，设置是否单次定位。默认是false
 		mOption.setOnceLocationLatest(false);//可选，设置是否等待wifi刷新，默认为false.如果设置为true,会自动变为单次定位，持续定位时不要使用
 		AMapLocationClientOption.setLocationProtocol(AMapLocationProtocol.HTTP);//可选， 设置网络请求的协议。可选HTTP或者HTTPS。默认为HTTP
-		mOption.setSensorEnable(false);//可选，设置是否使用传感器。默认是false
+		mOption.setSensorEnable(true);//可选，设置是否使用传感器。默认是false
 		mOption.setWifiScan(true); //可选，设置是否开启wifi扫描。默认为true，如果设置为false会同时停止主动刷新，停止以后完全依赖于系统刷新，定位位置可能存在误差
 		mOption.setLocationCacheEnable(true); //可选，设置是否使用缓存定位，默认为true
 		mOption.setGeoLanguage(AMapLocationClientOption.GeoLanguage.DEFAULT);//可选，设置逆地理信息的语言，默认值为默认语言（根据所在地区选择语言）
@@ -274,6 +188,7 @@ public class Location_Activity extends CheckPermissionsActivity
 				params.put("Area",String.valueOf(location.getDistrict()));
 				params.put("Address",String.valueOf( location.getAddress()));
 				params.put("Speed",String.valueOf(location.getSpeed()));
+                params.put("ag",String.valueOf(location.getBearing()));
 				Api.savePosition(mContext, params, new NetUtils.NetCallBack<RspOk>() {
 					@Override
 					public void success(RspOk rspData) {
@@ -316,44 +231,6 @@ public class Location_Activity extends CheckPermissionsActivity
 				break;
 		}
 		return str;
-	}
-	// 根据控件的选择，重新设置定位参数
-	private void resetOption() {
-		// 设置是否需要显示地址信息
-		locationOption.setNeedAddress(cbAddress.isChecked());
-		/**
-		 * 设置是否优先返回GPS定位结果，如果30秒内GPS没有返回定位结果则进行网络定位
-		 * 注意：只有在高精度模式下的单次定位有效，其他方式无效
-		 */
-		locationOption.setGpsFirst(cbGpsFirst.isChecked());
-		// 设置是否开启缓存
-		locationOption.setLocationCacheEnable(cbCacheAble.isChecked());
-		// 设置是否单次定位
-		locationOption.setOnceLocation(cbOnceLocation.isChecked());
-		//设置是否等待设备wifi刷新，如果设置为true,会自动变为单次定位，持续定位时不要使用
-		locationOption.setOnceLocationLatest(cbOnceLastest.isChecked());
-		//设置是否使用传感器
-		locationOption.setSensorEnable(cbSensorAble.isChecked());
-		//设置是否开启wifi扫描，如果设置为false时同时会停止主动刷新，停止以后完全依赖于系统刷新，定位位置可能存在误差
-		String strInterval = etInterval.getText().toString();
-		if (!TextUtils.isEmpty(strInterval)) {
-			try{
-				// 设置发送定位请求的时间间隔,最小值为1000，如果小于1000，按照1000算
-				locationOption.setInterval(Long.valueOf(strInterval));
-			}catch(Throwable e){
-				e.printStackTrace();
-			}
-		}
-		
-		String strTimeout = etHttpTimeout.getText().toString();
-		if(!TextUtils.isEmpty(strTimeout)){
-			try{
-				// 设置网络请求超时时间
-			     locationOption.setHttpTimeOut(Long.valueOf(strTimeout));
-			}catch(Throwable e){
-				e.printStackTrace();
-			}
-		}
 	}
 
 	/**

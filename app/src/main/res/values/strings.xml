@@ -2,20 +2,12 @@
 <resources>
 
     <string name="app_name">三预民兵系统</string>
-    <string name="hello">Hello SHARE_POSITION!</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="test">测试!</string>
     <string name="app_backto_parent">返回</string>
     <string name="app_hometo_parent">首页</string>
-    <string name="search_good">搜索</string>
-    <string name="search_dishes">请输入菜品编码</string>
+    <string name="btn_message">上报情况</string>
     <string name="hint_phone">请输入您的账号</string>
     <string name="hint_pwd">请输入您的密码</string>
-    <string name="hint_ip">请输入主收银台IP地址</string>
-    <string name="hint_ip_tip">正在作为分机，连接主收银使用</string>
     <string name="hint_comment">手工输入</string>
-    <string name="text_remark">整单备注</string>
     <string name="text_update">软件更新提示</string>
 
 

@@ -135,4 +135,13 @@ public class Utils {
 		}
 		return false;
 	}
+
+	/**
+	 * 验证手机格式
+	 */
+	public static boolean isMobileNO(String mobiles) {
+		String telRegex = "[1]\\d{10}";//"[1]"代表第1位为数字1，"\\d{10}"代表后面是可以是0～9的数字，有10位。
+		if (TextUtils.isEmpty(mobiles)) return false;
+		else return mobiles.matches(telRegex);
+	}
 }

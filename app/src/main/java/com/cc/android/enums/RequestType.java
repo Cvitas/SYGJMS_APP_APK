@@ -5,7 +5,8 @@ package com.cc.android.enums;
  */
 public enum RequestType {
 
-    SAVE_POSITION("MapPoint/AddUserPoint");//登录
+    APP_LOGIN("login/UserLogin"),//登录
+    SAVE_POSITION("MapPoint/AddUserPoint");//保存定位数据
 
     private String value;
 
