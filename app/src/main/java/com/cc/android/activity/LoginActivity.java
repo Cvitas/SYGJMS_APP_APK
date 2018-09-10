@@ -61,11 +61,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         tv_err_info = (TextView) findViewById(R.id.tv_err_info);
         et_user = (EditText) findViewById(R.id.et_user);
         et_pwd = (EditText) findViewById(R.id.et_pwd);
-
-        DB_Object<RspLogin> db = new DB_Object<RspLogin>(this, RspLogin.class);
-        RspLogin loginInfo = db.getObject();
-        if (loginInfo != null && loginInfo.getLoginInfo() != null && loginInfo.getLoginInfo().getUser() != null)
-            et_user.setText(loginInfo.getLoginAccount());
     }
 
     @Override
@@ -125,13 +120,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             tv_err_info.setText("请输入密码！");
             return;
         }
-        Api.Login(self, userName, userPwd, new NetUtils.NetCallBack<RspOk>() {
+        Api.Login(self, userName, userPwd, new NetUtils.NetCallBack<RspLogin>() {
             @Override
-            public void success(RspOk rspData) {
+            public void success(RspLogin rspData) {
+                Api.setToken(rspData.getUser().getUserId());
                 Intent intent = new Intent(self, Location_Activity.class);
                 startActivity(intent);
                 rightToleft();
             }
+
             @Override
             public void failed(String msg) {
                 System.out.println(msg);

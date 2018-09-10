@@ -6,7 +6,8 @@ package com.cc.android.enums;
 public enum RequestType {
 
     APP_LOGIN("login/UserLogin"),//登录
-    SAVE_POSITION("MapPoint/AddUserPoint");//保存定位数据
+    SAVE_POSITION("MapPoint/AddUserPoint"),//保存定位数据
+    UPLOAD_MESSAGE("Message/AddMessage");//上传消息
 
     private String value;
 

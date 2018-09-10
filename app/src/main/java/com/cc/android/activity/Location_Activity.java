@@ -1,8 +1,12 @@
 package com.cc.android.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.*;
@@ -128,7 +132,32 @@ public class Location_Activity extends CheckPermissionsActivity implements OnCli
 				stopLocation();
 			}
 		}else if(v.getId() == R.id.bt_message){
-            AlertMessage.dialogShow(this,"a","assssssssssssssssssss");
+			final EditText editText = (EditText) LayoutInflater.from(this).inflate(R.layout.alert_message, null);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.dialog_soft_input).setView(editText);
+			builder.setTitle("消息上报")
+					.setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							String msg = editText.getText().toString();
+							Api.uploadMessage(mContext, msg, new NetUtils.NetCallBack<RspOk>() {
+								@Override
+								public void success(RspOk rspData) {
+									Toast.show(self,"上报成功");
+								}
+								@Override
+								public void failed(String msg) {
+									Toast.show(self,"上报失败");
+								}
+							});
+						}
+					})
+					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+			builder.show();
         }
 	}
 	
@@ -147,6 +176,7 @@ public class Location_Activity extends CheckPermissionsActivity implements OnCli
 		locationClient.setLocationOption(locationOption);
 		// 设置定位监听
 		locationClient.setLocationListener(locationListener);
+		startLocation();
 	}
 	
 	/**
@@ -180,7 +210,6 @@ public class Location_Activity extends CheckPermissionsActivity implements OnCli
 		public void onLocationChanged(AMapLocation location) {
 			if (null != location && location.getErrorCode() == 0) {
 				final Map<String, String> params = new HashMap<>();
-				params.put("UserId","1");
 				params.put("Longitude",String.valueOf(location.getLongitude()));
 				params.put("Latitude",String.valueOf(location.getLatitude()));
 				params.put("Province",String.valueOf(location.getProvince()));

@@ -386,4 +386,7 @@
         <item name="android:windowEnterAnimation">@anim/dialog_show</item>
         <item name="android:windowExitAnimation">@anim/dialog_dismiss</item>
     </style>
+    <style name="dialog_soft_input" parent="@android:style/Theme.Dialog">
+        <item name="android:windowSoftInputMode">stateVisible|adjustPan</item>
+    </style>
 </resources>

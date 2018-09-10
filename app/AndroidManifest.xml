@@ -52,8 +52,8 @@
                   android:configChanges="keyboardHidden|orientation|screenSize"
                   android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity android:name=".activity.Location_Activity"
-                  android:configChanges="keyboardHidden|orientation|screenSize"
-                  android:windowSoftInputMode="adjustResize|stateHidden"/>
+                    android:screenOrientation="portrait"
+                    android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
     </application>
 
 </manifest>
