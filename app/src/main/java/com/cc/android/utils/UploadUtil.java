@@ -1,10 +1,6 @@
 package com.cc.android.utils;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -125,7 +121,7 @@ public class UploadUtil {
 
     private void toUploadFile(File file, String fileKey, String RequestURL,
                               Map<String, String> param) {
-        String result = null;
+        String result = "";
         requestTime= 0;
 
         long requestTime = System.currentTimeMillis();
@@ -143,7 +139,7 @@ public class UploadUtil {
             conn.setRequestProperty("Charset", CHARSET); // 设置编码
             conn.setRequestProperty("connection", "keep-alive");
             conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
-            conn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary=" + BOUNDARY);
+            conn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary=" + BOUNDARY+";charset=utf-8");
 //          conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             /**
@@ -220,14 +216,19 @@ public class UploadUtil {
                 Log.e(TAG, "request success");
                 InputStream input = conn.getInputStream();
                 StringBuffer sb1 = new StringBuffer();
-                int ss;
-                while ((ss = input.read()) != -1) {
-                    sb1.append((char) ss);
+//                int ss;
+//                while ((ss = input.read()) != -1) {
+//                    sb1.append((char) ss);
+//                }
+//                result = sb1.toString();
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        input,"utf-8"));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    result += line;
                 }
-                result = sb1.toString();
                 Log.e(TAG, "result : " + result);
-                sendMessage(UPLOAD_SUCCESS_CODE, "上传结果："
-                        + result);
+                sendMessage(UPLOAD_SUCCESS_CODE, result);
                 return;
             } else {
                 Log.e(TAG, "request error");

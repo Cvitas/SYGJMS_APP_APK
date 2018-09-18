@@ -9,20 +9,26 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.cc.android.R;
 import com.cc.android.base.BaseActivity;
+import com.cc.android.entity.RspResult;
+import com.cc.android.net.Api;
+import com.cc.android.net.NetUtils;
+import com.cc.android.utils.UploadUtil;
+import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author spring sky<br>
@@ -32,7 +38,7 @@ import java.io.FileNotFoundException;
  * 说明：主要用于选择文件操作
  */
 
-public class SelectPicActivity extends BaseActivity implements OnClickListener{
+public class SelectPicActivity extends BaseActivity implements OnClickListener ,UploadUtil.OnUploadProcessListener {
 
     /***
      * 使用照相机拍照获取图片
@@ -50,9 +56,29 @@ public class SelectPicActivity extends BaseActivity implements OnClickListener{
 
     private static final String TAG = "SelectPicActivity";
 
-    private LinearLayout dialogLayout;
-    private Button takePhotoBtn,pickPhotoBtn,cancelBtn;
+    private Button takePhotoBtn,cancelBtn,btn_upload;
     private ImageView img;
+    private EditText message;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 0:
+                    btn_upload.setEnabled(true);
+                    Bundle bundle = msg.getData();
+                    com.cc.android.widget.Toast.show(self,bundle.get("msg").toString());
+                    break;
+                case 1:
+                    btn_upload.setEnabled(true);
+                    com.cc.android.widget.Toast.show(self,"上报成功");
+                    Intent intent = new Intent(self, Location_Activity.class);
+                    startActivity(intent);
+                    leftToright();
+                    break;
+            }
+        }
+    };
 
     /**获取到的图片路径*/
     private String picPath;
@@ -60,6 +86,7 @@ public class SelectPicActivity extends BaseActivity implements OnClickListener{
     private Intent lastIntent ;
 
     private Uri photoUri;
+    private File photoFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,10 +102,12 @@ public class SelectPicActivity extends BaseActivity implements OnClickListener{
 //        takePhotoBtn = (Button) findViewById(R.id.btn_take_photo);
 //        takePhotoBtn.setOnClickListener(this);
         img = (ImageView) findViewById(R.id.picture);
-        pickPhotoBtn = (Button) findViewById(R.id.btn_pick_photo);
-        pickPhotoBtn.setOnClickListener(this);
+        img.setOnClickListener(this);
+        btn_upload = (Button) findViewById(R.id.btn_upload);
         cancelBtn = (Button) findViewById(R.id.btn_cancel);
+        message = (EditText) findViewById(R.id.message);
         cancelBtn.setOnClickListener(this);
+        btn_upload.setOnClickListener(this);
         lastIntent = getIntent();
     }
 
@@ -88,14 +117,17 @@ public class SelectPicActivity extends BaseActivity implements OnClickListener{
 //            case R.id.dialog_layout:
 //                finish();
 //                break;
-//            case R.id.btn_take_photo:
-//                takePhoto();
-//                break;
-            case R.id.btn_pick_photo:
+            case R.id.btn_upload:
+                btn_upload.setEnabled(false);
+                uploadMessage();
+                break;
+            case R.id.picture:
                 pickPhoto();
                 break;
-            default:
+            case R.id.btn_cancel:
                 finish();
+                break;
+            default:
                 break;
         }
     }
@@ -129,16 +161,9 @@ public class SelectPicActivity extends BaseActivity implements OnClickListener{
      * 从相册中取图片
      */
     private void pickPhoto() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
         startActivityForResult(intent, SELECT_PIC_BY_PICK_PHOTO);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        finish();
-        return super.onTouchEvent(event);
     }
 
 
@@ -148,11 +173,22 @@ public class SelectPicActivity extends BaseActivity implements OnClickListener{
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case SELECT_PIC_BY_PICK_PHOTO:
-                    Uri uri = data.getData();
+                    Uri photoUri = data.getData();
                     Bitmap mBitmap = null;
                     try {
                         mBitmap = BitmapFactory.decodeStream(
-                                getContentResolver().openInputStream(data.getData()));
+                                getContentResolver().openInputStream(photoUri));
+                        String[] proj = {MediaStore.Images.Media.DATA};
+                        // 好像是Android多媒体数据库的封装接口，具体的看Android文档
+                        Cursor cursor = getContentResolver().query(photoUri, proj, null, null, null);
+                        // 按我个人理解 这个是获得用户选择的图片的索引值
+                        int column_index = cursor
+                                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                        // 将光标移至开头 ，这个很重要，不小心很容易引起越界
+                        cursor.moveToFirst();
+                        // 最后根据索引值获取图片路径
+                        String path = cursor.getString(column_index);
+                        photoFile = new File(path);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -201,5 +237,42 @@ public class SelectPicActivity extends BaseActivity implements OnClickListener{
         }else{
             Toast.makeText(this, "选择图片文件不正确", Toast.LENGTH_LONG).show();
         }
+    }
+    public void uploadMessage(){
+        String msg = message.getText().toString();
+        Map<String,String> params = new HashMap<>();
+        params.put("Msg_From", Api.getToken().get("token"));
+        params.put("Msg_Title", msg);
+        params.put("Msg_Content", msg);
+        String reqUrl = NetUtils.getBaseUrl()+"Message/AddMessage";
+        UploadUtil.getInstance().setOnUploadProcessListener(this);
+        UploadUtil.getInstance().uploadFile(photoFile,"img1",reqUrl,params);
+    }
+
+    @Override
+    public void onUploadDone(int responseCode, String message) {
+        Gson gson = new Gson();
+        RspResult result= gson.fromJson(message,RspResult.class);
+        Message ms = new Message();
+        if(result.getCode() == 200){
+            ms.what = 1;
+            handler.sendMessage(ms);
+        }else{
+            ms.what = 0;
+            Bundle bundle = new Bundle();
+            bundle.putString("msg",result.getMessage());
+            ms.setData(bundle);
+            handler.sendMessage(ms);
+        }
+    }
+
+    @Override
+    public void onUploadProcess(int uploadSize) {
+        System.out.println("onUploadProcess");
+    }
+
+    @Override
+    public void initUpload(int fileSize) {
+        System.out.println("initUpload");
     }
 }

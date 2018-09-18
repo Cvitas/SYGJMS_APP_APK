@@ -3,13 +3,11 @@ package com.cc.android.activity;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.webkit.*;
@@ -17,7 +15,6 @@ import android.webkit.*;
 import com.cc.android.R;
 import com.cc.android.base.BaseActivity;
 import com.cc.android.net.Api;
-import com.cc.android.widget.Toast;
 
 public class BrowserActivity extends BaseActivity {
 	private WebView webView;
