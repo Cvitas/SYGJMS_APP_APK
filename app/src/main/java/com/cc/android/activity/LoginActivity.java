@@ -42,10 +42,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         //setTranslucentStatus();
 
-        if (!isTaskRoot()) {
-            finish();
-            return;
-        }
+//        if (!isTaskRoot()) {
+//            finish();
+//            return;
+//        }
         finalView = (KeyboardLinearLayout) LayoutInflater.from(this).inflate(R.layout.activity_login, null);
         finalView.setOnKeyBoardChangeListener(onKeyBoardChangeListener);
 
@@ -158,11 +158,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             }
         }
     };
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return true;
-    }
 
     @Override
     protected void onResume() {

@@ -17,7 +17,7 @@
             android:id="@+id/et_user"
             style="@style/editTextStyle"
             android:drawableLeft="@drawable/login_ico_phone"
-            android:text=""
+            android:text="admin"
             android:hint="@string/hint_phone"/>
     <View
             android:layout_width="fill_parent"
@@ -33,7 +33,7 @@
                 style="@style/editTextStyle"
                 android:drawableLeft="@drawable/login_ico_password"
                 android:hint="@string/hint_pwd"
-                android:text=""
+                android:text="123456"
                 android:inputType="textPassword"/>
     </RelativeLayout>
     <View

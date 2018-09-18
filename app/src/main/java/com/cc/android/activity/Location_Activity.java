@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,9 +24,11 @@ import com.cc.android.net.Api;
 import com.cc.android.net.NetUtils;
 import com.cc.android.R;
 import com.cc.android.entity.RspOk;
+import com.cc.android.widget.ActionSheetDialog;
 import com.cc.android.widget.AlertMessage;
 import com.cc.android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +48,7 @@ public class Location_Activity extends CheckPermissionsActivity implements OnCli
 	private AMapLocationClientOption locationOption = null;
 	private MapView mMapView;
 	private Context mContext;
+	private ArrayList<ActionSheetDialog.SheetData> al = new ArrayList<ActionSheetDialog.SheetData>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,33 +137,35 @@ public class Location_Activity extends CheckPermissionsActivity implements OnCli
 				stopLocation();
 			}
 		}else if(v.getId() == R.id.bt_message){
-			final EditText editText = (EditText) LayoutInflater.from(this).inflate(R.layout.alert_message, null);
-			AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.dialog_soft_input).setView(editText);
-			builder.setTitle("消息上报")
-					.setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							String msg = editText.getText().toString();
-							Api.uploadMessage(mContext, msg, new NetUtils.NetCallBack<RspOk>() {
-								@Override
-								public void success(RspOk rspData) {
-									Toast.show(self,"上报成功");
-								}
-								@Override
-								public void failed(String msg) {
-									Toast.show(self,"上报失败");
-								}
-							});
-						}
-					})
-					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
-						}
-					});
-			builder.show();
-        }
+//			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//			LinearLayout layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.alert_message, null);
+//			View view = View.inflate(this, R.layout.alert_message, null);
+//			builder.setView(view);
+//			builder.setCancelable(true);
+//			TextView title= (TextView) view
+//					.findViewById(R.id.title);//设置标题
+//			EditText input_edt= (EditText) view
+//					.findViewById(R.id.dialog_edit);//输入内容
+//			Button btn_cancel=(Button)view
+//					.findViewById(R.id.btn_cancel);//取消按钮
+//			Button btn_comfirm=(Button)view
+//					.findViewById(R.id.btn_comfirm);//确定按钮
+//			Button dialog_upload=(Button)view
+//					.findViewById(R.id.dialog_upload);//确定按钮
+//			dialog_upload.setOnClickListener(new OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//				}
+//			});
+//			//取消或确定按钮监听事件处理
+//			AlertDialog dialog = builder.create();
+//			dialog.show();
+			Intent intent = new Intent(self, SelectPicActivity.class);
+			startActivity(intent);
+			rightToleft();
+		}else{
+
+		}
 	}
 	
 	/**
@@ -308,4 +315,23 @@ public class Location_Activity extends CheckPermissionsActivity implements OnCli
 			locationOption = null;
 		}
 	}
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		/**
+//		 * 这里监控的是物理返回或者设置了该接口的点击事件
+//		 * 当按钮事件为返回时，且WebView可以返回，即触发返回事件
+//		 */
+//		if (keyCode == KeyEvent.KEYCODE_BACK) {
+//			if(Api.getToken().get("token") == null){
+//				Intent intent = new Intent(this, LoginActivity.class);
+//				startActivity(intent);
+//				rightToleft();
+//			}else{
+//				Intent intent = new Intent(this, BrowserActivity.class);
+//				startActivity(intent);
+//				rightToleft();
+//			}
+//		}
+//		return false;
+//	}
 }
