@@ -19,6 +19,7 @@ import android.widget.*;
 
 import com.cc.android.R;
 import com.cc.android.base.BaseActivity;
+import com.cc.android.entity.RspOk;
 import com.cc.android.entity.RspResult;
 import com.cc.android.net.Api;
 import com.cc.android.net.NetUtils;
@@ -240,13 +241,37 @@ public class SelectPicActivity extends BaseActivity implements OnClickListener ,
     }
     public void uploadMessage(){
         String msg = message.getText().toString();
+        if(msg.equals("")){
+            com.cc.android.widget.Toast.show(self,"请输入上报的消息");
+            btn_upload.setEnabled(true);
+            return;
+        }
         Map<String,String> params = new HashMap<>();
         params.put("Msg_From", Api.getToken().get("token"));
         params.put("Msg_Title", msg);
         params.put("Msg_Content", msg);
-        String reqUrl = NetUtils.getBaseUrl()+"Message/AddMessage";
-        UploadUtil.getInstance().setOnUploadProcessListener(this);
-        UploadUtil.getInstance().uploadFile(photoFile,"img1",reqUrl,params);
+        if(photoFile != null){
+            String reqUrl = NetUtils.getBaseUrl()+"Message/AddMessage";
+            UploadUtil.getInstance().setOnUploadProcessListener(this);
+            UploadUtil.getInstance().uploadFile(photoFile,"img1",reqUrl,params);
+        }else{
+            Api.uploadMessage(this, msg, new NetUtils.NetCallBack<RspOk>() {
+                @Override
+                public void success(RspOk rspData) {
+                    btn_upload.setEnabled(true);
+                    com.cc.android.widget.Toast.show(self,"上报成功");
+                    Intent intent = new Intent(self, Location_Activity.class);
+                    startActivity(intent);
+                    leftToright();
+                }
+                @Override
+                public void failed(String msg) {
+                    btn_upload.setEnabled(true);
+                    com.cc.android.widget.Toast.show(self,"上报失败");
+                }
+            });
+        }
+
     }
 
     @Override
